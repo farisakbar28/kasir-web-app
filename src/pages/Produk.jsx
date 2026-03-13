@@ -43,8 +43,7 @@ export default function Produk() {
   const openEdit = p  => { setSelected(p); setForm({ name: p.name, price: String(p.price), stock: String(p.stock) }); setModal('edit') }
   const openDel  = p  => { setSelected(p); setModal('delete') }
   const close    = () => { setModal(null); setSelected(null); setForm(EMPTY) }
-
-  const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
+  const f        = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   const save = async () => {
     if (!form.name.trim() || !form.price || !form.stock) { toast$('Semua field wajib diisi', 'error'); return }
@@ -70,23 +69,20 @@ export default function Produk() {
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 36 }}>
+      <div className="page-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
         <div>
           <div className="page-eyebrow">Manajemen</div>
           <h1 className="page-title">Daftar Produk</h1>
-          <p className="page-sub">{loading ? 'â€”' : `${produk.length} produk terdaftar`}</p>
+          <p className="page-sub">{loading ? '—' : `${produk.length} produk terdaftar`}</p>
         </div>
         <button className="btn btn-primary btn-lg" onClick={openAdd}>
           <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Produk Baru
         </button>
       </div>
 
-      {/* Search bar */}
+      {/* Search */}
       <div style={{ marginBottom: 20, position: 'relative' }}>
-        <span style={{
-          position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
-          color: 'var(--muted)', fontSize: 15,
-        }}>âŒ•</span>
+        <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: 16 }}>⌕</span>
         <input
           className="input"
           style={{ paddingLeft: 42, fontSize: 15 }}
@@ -95,14 +91,10 @@ export default function Produk() {
           onChange={e => setSearch(e.target.value)}
         />
         {search && (
-          <button
-            onClick={() => setSearch('')}
-            style={{
-              position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-              background: 'none', border: 'none', color: 'var(--muted)',
-              cursor: 'pointer', fontSize: 16,
-            }}
-          >âœ•</button>
+          <button onClick={() => setSearch('')} style={{
+            position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+            background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16,
+          }}>✕</button>
         )}
       </div>
 
@@ -111,11 +103,11 @@ export default function Produk() {
         {loading ? (
           <div style={{ padding: '60px 0', textAlign: 'center' }}>
             <div className="spinner" style={{ width: 28, height: 28, borderWidth: 3, margin: '0 auto 14px' }} />
-            <div style={{ color: 'var(--muted)', fontSize: 13 }}>Memuat data produk...</div>
+            <div style={{ color: 'var(--muted)', fontSize: 13 }}>Memuat data...</div>
           </div>
         ) : produk.length === 0 ? (
-          <div style={{ padding: '80px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 52, marginBottom: 14, opacity: 0.3 }}>â–¦</div>
+          <div style={{ padding: '70px 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 48, marginBottom: 14, opacity: 0.2 }}>▦</div>
             <div style={{ color: 'var(--muted)', fontSize: 15 }}>
               {search ? `Tidak ada hasil untuk "${search}"` : 'Belum ada produk'}
             </div>
@@ -140,24 +132,19 @@ export default function Produk() {
               </thead>
               <tbody>
                 {produk.map((p, i) => (
-                  <tr key={p.id} style={{ animationDelay: `${i * 30}ms` }}>
+                  <tr key={p.id} style={{ animation: `fadeUp 0.3s ease ${i * 30}ms both` }}>
                     <td>
                       <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                         #{String(p.id).padStart(3, '0')}
                       </span>
                     </td>
+                    <td><span style={{ fontWeight: 600 }}>{p.name}</span></td>
                     <td>
-                      <span style={{ fontWeight: 600, color: 'var(--text)' }}>{p.name}</span>
+                      <span style={{ fontFamily: 'var(--mono)', fontWeight: 700, color: 'var(--amber)', fontSize: 14 }}>
+                        {fmt(p.price)}
+                      </span>
                     </td>
-                    <td>
-                      <span style={{
-                        fontFamily: 'var(--mono)', fontWeight: 700,
-                        color: 'var(--amber)', fontSize: 14,
-                      }}>{fmt(p.price)}</span>
-                    </td>
-                    <td>
-                      <span style={{ fontFamily: 'var(--mono)', fontWeight: 600 }}>{p.stock}</span>
-                    </td>
+                    <td><span style={{ fontFamily: 'var(--mono)', fontWeight: 600 }}>{p.stock}</span></td>
                     <td>
                       {p.stock === 0
                         ? <span className="badge badge-red">Habis</span>
@@ -179,7 +166,7 @@ export default function Produk() {
         )}
       </div>
 
-      {/* Modal Add / Edit */}
+      {/* Modal Add/Edit */}
       {(modal === 'add' || modal === 'edit') && (
         <Modal
           title={modal === 'add' ? 'Tambah Produk' : 'Edit Produk'}
@@ -199,24 +186,17 @@ export default function Produk() {
             <FormField label="Stok Awal">
               <input className="input" type="number" placeholder="100" value={form.stock} onChange={e => f('stock', e.target.value)} />
             </FormField>
-
-            {/* Preview */}
             {form.name && form.price && (
-              <div style={{
-                background: 'rgba(245,158,11,0.06)',
-                border: '1px solid rgba(245,158,11,0.15)',
-                borderRadius: 10, padding: '12px 16px',
-              }}>
+              <div style={{ background: 'var(--amber-dim)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 10, padding: '12px 16px' }}>
                 <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700 }}>Preview</div>
-                <div style={{ fontWeight: 700 }}>{form.name}</div>
+                <div style={{ fontWeight: 700, color: 'var(--text)' }}>{form.name}</div>
                 <div style={{ fontFamily: 'var(--mono)', color: 'var(--amber)', fontSize: 15 }}>{fmt(form.price || 0)}</div>
               </div>
             )}
-
-            <div style={{ display: 'flex', gap: 10, paddingTop: 8 }}>
+            <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
               <button className="btn btn-ghost w-full" onClick={close}>Batal</button>
               <button className="btn btn-primary w-full" onClick={save} disabled={saving}>
-                {saving ? <span className="spinner" /> : modal === 'add' ? 'Tambah Produk' : 'Simpan Perubahan'}
+                {saving ? <span className="spinner" /> : modal === 'add' ? 'Tambah Produk' : 'Simpan'}
               </button>
             </div>
           </div>
@@ -226,13 +206,9 @@ export default function Produk() {
       {/* Modal Delete */}
       {modal === 'delete' && (
         <Modal title="Hapus Produk" subtitle="Tindakan ini tidak dapat dibatalkan" onClose={close}>
-          <div style={{
-            background: 'rgba(252,165,165,0.05)',
-            border: '1px solid rgba(252,165,165,0.15)',
-            borderRadius: 12, padding: '16px 20px', marginBottom: 24,
-          }}>
+          <div style={{ background: 'var(--red-dim)', border: '1px solid rgba(252,165,165,0.15)', borderRadius: 12, padding: '16px 20px', marginBottom: 24 }}>
             <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>Produk yang akan dihapus:</div>
-            <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 22 }}>{selected?.name}</div>
+            <div style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--text)' }}>{selected?.name}</div>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn-ghost w-full" onClick={close}>Batalkan</button>
